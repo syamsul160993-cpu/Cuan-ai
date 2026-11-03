@@ -1,0 +1,33 @@
+name: Build cuan.AI APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [utama]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract source
+        run: unzip -o cuan_AI_android_starter_v2.zip -d .
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        run: gradle :app:assembleDebug
+        working-directory: android
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cuan-ai-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
